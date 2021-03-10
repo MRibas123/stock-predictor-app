@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Investment Portofolio</title>
+{% endblock %}
+
+{% block body%}
+
+<div>
+    <h1 style="text-align: center">This is my portfolio.</h1>
+</div>
+<div class="table">
+    <form class="form" id="form" action="/" method="POST" >
+        <table>
+            <tr>
+                <th>Stock Ticker</th>
+                <th>Stock Price</th>
+                <th>Predicted Variation</th>
+            </tr>
+            {% for a,b,c in lp %}
+            <tr>
+                <td>{{a.upper()}}</td>
+                <td>{{b}}$</td>
+                <td>{{c}}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h6 class="heading_result">Returns</h6>
+        <div class="result">{{rtr}}</div>
+        <h6 class="heading_result">Investment</h6>
+        <div class="result">{{inv}}</div>
+        <h6 class="heading_result">Enter in the boxes below, how many stocks would you like to buy.</h6>
+        <div class="button">
+            <input type="submit" value="Calculate" />
+        </div>
+</div>
+    <div class = "box">
+        <div class="container">
+            <h4 class="heading">Low Price Stocks</h4>
+            <div class="stock1">
+                <h5>{{tasks[0].upper()}}</h5>
+                <input type="text" name="price0" id="price0" value="0" />
+            </div>
+            <div class="stock2">
+                <h5>{{tasks[1].upper()}}</h5>
+                <input type="text" name="price1" id="price1" value ="0"/>
+            </div>
+            <div class="stock3">
+                <h5>{{tasks[2].upper()}}</h5>
+                <input type="text" name="price2" id="price2" value ="0"/>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <h4 class="heading">Medium Price Stocks</h4>
+            <div class="stock1">
+                <h5>{{tasks[3].upper()}}</h5>
+                <input type="text" name="price3" id="price3" value ="0"/>
+            </div>
+            <div class="stock2">
+                <h5>{{tasks[4].upper()}}</h5>
+                <input type="text" name="price4" id="price4" value ="0"/>
+            </div>
+            <div class="stock3">
+                <h5>{{tasks[5].upper()}}</h5>
+                <input type="text" name="price5" id="price5" value ="0"/>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <h4 class="heading">High Price Stocks</h4>
+            <div class="stock1">
+                <h5>{{tasks[6].upper()}}</h5>
+                <input type="text" name="price6" id="price6" value ="0"/>
+            </div>
+            <div class="stock2">
+                <h5>{{tasks[7].upper()}}</h5>
+                <input type="text" name="price7" id="price7" value ="0"/>
+            </div>
+            <div class="stock3">
+                <h5>{{tasks[8].upper()}}</h5>
+                <input type="text" name="price8" id="price8" value ="0"/>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

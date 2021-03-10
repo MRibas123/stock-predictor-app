@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block body%}
+<div class="content">
+    <h4 style="text-align: center">Please enter your email if you want to receive daily information.</h4>
+    <div class="box">
+        <form action="/contact" method="POST">
+            <input type="text" name="user" id="username" value="Enter your Name here"/>
+            <input type="text" name="mail" id="email" value="Enter your Mail here"/>
+            <input type="submit" value="Get Notification" style="text-align: center"/>
+        </form>
+    </div>
+    <p><b>After inserting your email, click on "Send Mail" to receive latest information about my portfolio.</b></p>
+</div>
+{% endblock %}
+{% block body2 %}
+ {% if tasks|length < 1 %}
+    <h4 style="text-align: center">Mails Created</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.username }}</td>
+                <td>{{ task.email }}</td>
+                 <td>
+                    <a href="/contact/delete/{{task.id}}">Delete</a>
+                    <br>
+                    <a href="/contact/update/{{task.id}}">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+{% endblock %}
