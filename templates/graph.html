@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block body %}
-
-<div>{% for task in tasks %}
-    {{task.email}}
+<div>
+    {% for i in t %}
+        {{i}}
     {% endfor %}
 </div>
 {% endblock %}

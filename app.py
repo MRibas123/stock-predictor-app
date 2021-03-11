@@ -1,9 +1,11 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
-from datetime import datetime
 import Automatization as at
 from datetime import datetime
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 app = Flask(__name__)
 
@@ -31,9 +33,10 @@ db = SQLAlchemy(app)
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    real_price = db.Column(db.String(200), nullable = False)
-    predicted = db.Column(db.String(200), nullable = False)
-    date_created = db.Column(db.DateTime, default = datetime.utcnow)
+    stock = db.Column(db.String(5), nullable = False)
+    real_price = db.Column(db.Float, nullable = False)
+    predicted = db.Column(db.Float, nullable = False)
+    date_created = db.Column(db.DateTime, default = datetime.utcnow().date)
 
 
 class Mail(db.Model):
@@ -43,12 +46,20 @@ class Mail(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
 
 
-
 @app.route('/', methods=['POST','GET'])
 def index():
     stocks = at.stocks
     var_prices = at.variation_list
     last_price = at.yesterday_list
+    predicted_price = at.predicted_list
+    if request.method == 'GET':
+        for st, last, pred in zip(stocks, last_price, predicted_price):
+            if Stock.query.filter(Stock.date_created).count() < len(stocks):
+                new_prices = Stock(stock=st, real_price=last, predicted=pred)
+                db.session.add(new_prices)
+                db.session.commit()
+            else:
+                break
     returns = 0
     investment = 0
     if request.method == 'POST':
@@ -134,7 +145,43 @@ def send_mail():
     mail.send(msg)
     return redirect('/contact')
 
-#@app.route('/graph', methods = ['GET'])
+@app.route('/graph', methods = ['GET'])
+def graph():
+    data_stock = Stock.query.order_by(Stock.date_created).all()
+    data = []
+    real_price = []
+    pred_price = []
+    stock = []
+
+    for i in data_stock:
+        data.append(i.date_created)
+        real_price.append(i.real_price)
+        pred_price.append(i.predicted)
+        stock.append(i.stock)
+    stock_dic = {'date': data,
+                'real_price': real_price,
+                'predicted_price': pred_price,
+                'stock_ticker': stock}
+
+    stock_df = pd.DataFrame(stock_dic)
+    stock_df['date'] = pd.to_datetime(stock_df['date'])
+
+    for ticker in stock:
+        ticker_values = stock_df[stock_df['stock_ticker'] == ticker]
+        plt.scatter(ticker_values['date'], ticker_values['real_price'], label='real')
+        plt.scatter(ticker_values['date'], ticker_values['predicted_price'], label='predicted')
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
+        plt.gcf().autofmt_xdate()
+        plt.title(ticker)
+        plt.ylabel('Prices')
+        plt.xlabel('Days')
+        plt.legend()
+        plt.savefig(f'./static/{ticker}_plot.png')
+        plt.clf()
+
+
+    return render_template('/graph.html', t=data)
 
 if __name__ == "__main__":
     app.run(debug=True)

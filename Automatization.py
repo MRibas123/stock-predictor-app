@@ -37,7 +37,7 @@ def last_values(ticker):
     elif date.weekday() ==0:
         date = date.today().date() - timedelta(days=3)
     else:
-        date = datetime.today().date()
+        date = datetime.today().date()- timedelta(days=1)
     key_values = []
     last_value = data.DataReader(ticker, start = date, end= date ,data_source='yahoo').values[0]
     key_values.append(last_value[0])
@@ -58,12 +58,14 @@ def stock_model(ticker):
 #Gets prices for tomorrow
 yesterday_list = []
 variation_list = []
+predicted_list = []
 for i in range(len(stocks)):
     model_values = pd.DataFrame([stock_model(stocks[i])], columns = columns_data)
     yesterday_price= round(last_values(stocks[i])[1],2)
     predicted_price = round(xgb_model[i].predict(model_values)[0],2)
     variation_price = round((predicted_price-yesterday_price)/yesterday_price*100,2)
 
+    predicted_list.append(predicted_price)
     yesterday_list.append(yesterday_price)
     variation_list.append(variation_price)
     #print(stocks[i] + ' - ' + str(predicted_price))
