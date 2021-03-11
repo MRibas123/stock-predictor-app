@@ -36,7 +36,7 @@ class Stock(db.Model):
     stock = db.Column(db.String(5), nullable = False)
     real_price = db.Column(db.Float, nullable = False)
     predicted = db.Column(db.Float, nullable = False)
-    date_created = db.Column(db.DateTime, default = datetime.utcnow().date)
+    date_created = db.Column(db.DateTime, default = datetime.today().date())
 
 
 class Mail(db.Model):
@@ -52,9 +52,10 @@ def index():
     var_prices = at.variation_list
     last_price = at.yesterday_list
     predicted_price = at.predicted_list
+    todays_datetime = datetime(datetime.today().year, datetime.today().month, datetime.today().day)
     if request.method == 'GET':
         for st, last, pred in zip(stocks, last_price, predicted_price):
-            if Stock.query.filter(Stock.date_created).count() < len(stocks):
+            if Stock.query.filter(Stock.date_created == todays_datetime).count() < len(stocks):
                 new_prices = Stock(stock=st, real_price=last, predicted=pred)
                 db.session.add(new_prices)
                 db.session.commit()
@@ -166,7 +167,7 @@ def graph():
     stock_df = pd.DataFrame(stock_dic)
     stock_df['date'] = pd.to_datetime(stock_df['date'])
 
-    for ticker in stock:
+    for ticker in list(set(stock)):
         ticker_values = stock_df[stock_df['stock_ticker'] == ticker]
         plt.scatter(ticker_values['date'], ticker_values['real_price'], label='real')
         plt.scatter(ticker_values['date'], ticker_values['predicted_price'], label='predicted')
@@ -181,7 +182,7 @@ def graph():
         plt.clf()
 
 
-    return render_template('/graph.html', t=data)
+    return render_template('/graph.html', data=list(set(stock)))
 
 if __name__ == "__main__":
     app.run(debug=True)

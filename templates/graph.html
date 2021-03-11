@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<div>
-    {% for i in t %}
-        {{i}}
-    {% endfor %}
+{% for i in data %}
+<div class="grid">
+    <img src="static/{{i}}_plot.png" alt="{{i}}"/>
 </div>
+{% endfor %}
+
 {% endblock %}
