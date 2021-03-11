@@ -33,11 +33,11 @@ def today_date():
 def last_values(ticker):
     date = datetime.today()
     if date.weekday() == 6:
-        date = date.today() - 2*timedelta(days=1)
+        date = date.today().date() - timedelta(days=2)
     elif date.weekday() ==0:
-        date = date.today() - 3*timedelta(days=1)
+        date = date.today().date() - timedelta(days=3)
     else:
-        date = datetime.today() - timedelta(days=1)
+        date = datetime.today().date()
     key_values = []
     last_value = data.DataReader(ticker, start = date, end= date ,data_source='yahoo').values[0]
     key_values.append(last_value[0])
