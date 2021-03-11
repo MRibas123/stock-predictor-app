@@ -21,7 +21,15 @@
             <tr>
                 <td>{{a.upper()}}</td>
                 <td>{{b}}$</td>
-                <td>{{c}}%</td>
+                {% if c >0%}
+                <td style="background-color: #30a536">
+                    {{c}}%
+                </td>
+                {% else %}
+                <td style="background-color: #b43236">
+                    {{c}}%
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
@@ -35,6 +43,7 @@
         </div>
 </div>
     <div class = "box">
+
         <div class="container">
             <h4 class="heading">Low Price Stocks</h4>
             <div class="stock1">

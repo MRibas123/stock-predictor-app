@@ -31,10 +31,8 @@ db = SQLAlchemy(app)
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    last = db.Column(db.String(200), nullable = False)
-    tomorrow = db.Column(db.String(200), nullable = False)
-    investment = db.Column (db.Integer, nullable = False)
-    returns = db.Column (db.Integer, nullable = False)
+    real_price = db.Column(db.String(200), nullable = False)
+    predicted = db.Column(db.String(200), nullable = False)
     date_created = db.Column(db.DateTime, default = datetime.utcnow)
 
 
@@ -74,12 +72,18 @@ def index():
 @app.route('/contact', methods=['POST','GET'])
 def contact():
     if request.method == 'POST':
-        user = request.form['user']
-        user_mail = request.form['mail']
-        new_mail = Mail(username=user, email=user_mail)
-        db.session.add(new_mail)
-        db.session.commit()
-        return redirect('/contact')
+        try:
+            user = request.form['user']
+            user_mail = request.form['mail']
+            new_mail = Mail(username=user, email=user_mail)
+            db.session.add(new_mail)
+            db.session.commit()
+            return redirect('/contact')
+        except:
+            db.session.rollback()
+            tasks = Mail.query.order_by(Mail.id).all()
+            return render_template('contact.html', tasks=tasks)
+
     else:
         tasks = Mail.query.order_by(Mail.id).all()
         return render_template('contact.html', tasks=tasks)
@@ -120,13 +124,17 @@ def send_mail():
         mails.append(str(task.email))
     msg = Message('Stocks for today.', recipients=mails)
     msg.html = "Dear Subscriber,<br><br>" \
-               "These are the predicted variations for today: <br><br>"
+               "These are the predicted variations for today: <br><br>"\
+                "<table style='text-align:center; border: 3px solid #aaa'><tr style=' border: 3px solid #aaa'><th style=' border: 3px solid #aaa'>Stock Ticker</th><th style=' border: 3px solid #aaa'>Stock Price</th><th style=' border: 3px solid #aaa'>Predicted Variation</th></tr>"
     for i in range(len(stocks)):
-        msg.html += stocks[i].upper() + " closed yesterday at a price of " + str(last_price[i]) + "$ and it's expected to fluctuate "+ str(var_prices[i])+"%; <br>"
-    msg.html += "<br>Best Regards,<br>" \
-                "<i>Portfolio MR<i>"
+        msg.html += "<tr style=' border: 3px solid #aaa'><td style=' border: 3px solid #aaa'>" + stocks[i].upper()+"</td><td style=' border: 3px solid #aaa'td>"+str(last_price[i])+"$</td><td style=' border: 3px solid #aaa'>"+ str(var_prices[i])+"%</td></tr>"
+    msg.html += "</table>" \
+                "<br>Best Regards,<br>" \
+                "<i>Portfolio MR<tr>"
     mail.send(msg)
     return redirect('/contact')
+
+#@app.route('/graph', methods = ['GET'])
 
 if __name__ == "__main__":
     app.run(debug=True)
