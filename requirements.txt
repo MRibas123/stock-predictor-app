@@ -107,7 +107,7 @@ pyrsistent
 PySocks
 python-dateutil==2.8.1
 pytz
-pywin32==300
+pywin32
 pywin32-ctypes
 pywinpty
 PyYAML==5.4.1
