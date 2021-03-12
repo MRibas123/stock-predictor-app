@@ -144,7 +144,7 @@ def send_mail():
                 "<br>Best Regards,<br>" \
                 "<i>Portfolio MR<tr>"
     mail.send(msg)
-    return redirect('/contact')
+    return render_template('send_mail.html')
 
 @app.route('/graph', methods = ['GET'])
 def graph():
@@ -182,7 +182,7 @@ def graph():
         plt.clf()
 
 
-    return render_template('/graph.html', data=list(set(stock)))
+    return render_template('graph.html', data=list(set(stock)))
 
 if __name__ == "__main__":
     app.run(debug=True)
