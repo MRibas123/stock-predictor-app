@@ -169,8 +169,8 @@ def graph():
 
     for ticker in list(set(stock)):
         ticker_values = stock_df[stock_df['stock_ticker'] == ticker]
-        plt.scatter(ticker_values['date'], ticker_values['real_price'], label='real')
-        plt.scatter(ticker_values['date'], ticker_values['predicted_price'], label='predicted')
+        plt.plot(ticker_values['date'], ticker_values['real_price'], label='real')
+        plt.plot(ticker_values['date'], ticker_values['predicted_price'], label='predicted')
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
         plt.gcf().autofmt_xdate()
