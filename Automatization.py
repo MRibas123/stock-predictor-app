@@ -39,7 +39,7 @@ def last_values(ticker):
     else:
         date = datetime.today().date()- timedelta(days=1)
     key_values = []
-    last_value = data.DataReader(ticker, start = date, end= date ,data_source='yahoo').values[0]
+    last_value = data.DataReader(ticker, start = date ,data_source='yahoo').values[0]
     key_values.append(last_value[0])
     key_values.append(last_value[1])
     key_values.append(last_value[2])
